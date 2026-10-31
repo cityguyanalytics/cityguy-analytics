@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Cityguy Football Analytics — independent football statistics, match analysis and probability-based predictions.">
+<title>Cityguy Football Analytics</title>
+<style>
+:root{
+ --bg:#08111f;--panel:#101d30;--panel2:#14243b;--line:#243650;
+ --gold:#f4bd50;--white:#f5f7fb;--muted:#9eacc1;--green:#49c99a;
+ --red:#ff7777;--blue:#72aef7;--radius:17px;
+}
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--white);font:15px/1.55 Inter,system-ui,-apple-system,Segoe UI,Arial,sans-serif}
+a{color:inherit;text-decoration:none}
+.topbar{position:sticky;top:0;z-index:10;background:#08111fee;backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.nav{max-width:1200px;margin:auto;padding:14px 22px;display:flex;align-items:center;justify-content:space-between;gap:20px}
+.logo{font-size:20px;font-weight:950;letter-spacing:1.6px}.logo span{color:var(--gold)}
+.navlinks{display:flex;gap:22px;color:var(--muted);font-size:13px}.navlinks a:hover{color:var(--gold)}
+.wrap{max-width:1200px;margin:auto;padding:26px 22px 60px}
+.hero{padding:38px 34px;border:1px solid #30415c;border-radius:24px;background:radial-gradient(circle at 85% 10%,#23466b 0,transparent 36%),linear-gradient(120deg,#12233a,#0c1728 68%);position:relative;overflow:hidden}
+.eyebrow{color:var(--gold);font-size:11px;font-weight:900;letter-spacing:2px;text-transform:uppercase}
+h1{font-size:clamp(32px,5vw,54px);line-height:1.06;max-width:730px;margin:13px 0}
+.hero p{max-width:680px;color:#bdc9d9;margin:14px 0 22px}
+.btn{display:inline-block;background:var(--gold);color:#172033;padding:11px 17px;border-radius:10px;font-weight:850}
+.btn.secondary{background:transparent;border:1px solid #50627b;color:var(--white);margin-left:8px}
+.demo{margin-top:22px;padding:11px 14px;background:#382c16;border:1px solid #72551f;border-radius:10px;color:#f6d99c;font-size:12px}
+.sectionhead{display:flex;align-items:end;justify-content:space-between;gap:14px;margin:34px 0 15px}
+h2{font-size:22px;margin:0}.sub{color:var(--muted);font-size:13px;margin-top:3px}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:13px}
+.stat,.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:17px}
+.stat .label{color:var(--muted);font-size:12px}.stat .value{font-size:26px;font-weight:900;margin-top:5px}.stat .hint{font-size:11px;color:var(--muted)}
+.controls{display:flex;gap:9px;flex-wrap:wrap}
+select,input{background:var(--panel);color:var(--white);border:1px solid var(--line);border-radius:9px;padding:10px 12px}
+.matches{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+.matchtop{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.tag{font-size:10px;letter-spacing:.8px;text-transform:uppercase;color:var(--gold);font-weight:900}
+.pill{font-size:10px;border:1px solid #46607f;color:#b7c8dc;padding:4px 8px;border-radius:99px}
+.teams{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:10px;margin:20px 0}
+.team{font-size:18px;font-weight:850}.team:last-child{text-align:right}
+.vs{color:var(--muted);font-size:11px}
+.score{text-align:center;color:var(--gold);font-size:20px;font-weight:950}
+.probs{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
+.prob{background:var(--panel2);padding:9px;border-radius:9px;text-align:center}
+.prob b{display:block;font-size:17px}.prob span{font-size:10px;color:var(--muted)}
+.marketrow{display:flex;justify-content:space-between;border-top:1px solid var(--line);padding:10px 0;font-size:12px}
+.marketrow span{color:var(--muted)}.marketrow b{color:var(--white)}
+.cardfoot{display:flex;justify-content:space-between;align-items:center;margin-top:13px;color:var(--muted);font-size:11px}
+.conf{color:var(--gold);font-weight:800}
+.two{display:grid;grid-template-columns:1.2fr .8fr;gap:14px}
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:var(--radius)}
+table{border-collapse:collapse;width:100%;min-width:560px;background:var(--panel)}
+th,td{text-align:left;padding:12px 14px;border-bottom:1px solid var(--line);font-size:12px}
+th{color:var(--muted);font-weight:700;background:#142238}
+td{color:#e3eaf4}
+.good{color:var(--green)}.warning{color:var(--gold)}
+.bars{display:grid;gap:14px;margin-top:10px}.barline{display:grid;grid-template-columns:90px 1fr 40px;gap:10px;align-items:center;font-size:12px}
+.bar{height:8px;border-radius:99px;background:#253750;overflow:hidden}.bar i{display:block;height:100%;background:var(--gold);border-radius:99px}
+.method{display:grid;grid-template-columns:repeat(3,1fr);gap:13px}
+.method .card h3{margin:0 0 7px;font-size:15px}.method p{color:var(--muted);font-size:12px;margin:0}
+footer{border-top:1px solid var(--line);padding:25px 22px;color:var(--muted);text-align:center;font-size:12px}
+.hidden{display:none!important}
+@media(max-width:850px){.grid{grid-template-columns:repeat(2,1fr)}.matches,.two{grid-template-columns:1fr}.method{grid-template-columns:1fr}}
+@media(max-width:560px){.nav{align-items:flex-start}.navlinks{gap:10px;flex-wrap:wrap;justify-content:flex-end;font-size:11px}.hero{padding:25px 20px}.grid{grid-template-columns:repeat(2,1fr)}.stat{padding:13px}.stat .value{font-size:21px}.team{font-size:15px}}
+</style>
+</head>
+<body>
+<div class="topbar"><nav class="nav">
+ <a class="logo" href="#">CITYGUY<span> ⚽</span></a>
+ <div class="navlinks"><a href="#matches">Predictions</a><a href="#performance">Performance</a><a href="#method">Methodology</a><a href="#about">About</a></div>
+</nav></div>
+<main class="wrap">
+<section class="hero">
+ <div class="eyebrow">Football data • Intelligence • Predictions</div>
+ <h1>See the game beyond the scoreline.</h1>
+ <p>Independent football analysis built around team performance, expected goals, match context and transparent probability estimates.</p>
+ <a class="btn" href="#matches">Explore match analysis</a><a class="btn secondary" href="#method">How the model works</a>
+ <div class="demo"><strong>DEMO MODE:</strong> The fixtures and probabilities shown below are fictional examples used to demonstrate the website layout. They are not real fixtures or betting recommendations.</div>
+</section>
+
+<div class="sectionhead"><div><h2>Model snapshot</h2><div class="sub">Performance figures remain unpublished until real predictions have been logged and audited.</div></div></div>
+<section class="grid">
+ <div class="stat"><div class="label">Matches evaluated</div><div class="value">—</div><div class="hint">Awaiting verified test data</div></div>
+ <div class="stat"><div class="label">1X2 accuracy</div><div class="value">—</div><div class="hint">No results recorded yet</div></div>
+ <div class="stat"><div class="label">BTTS accuracy</div><div class="value">—</div><div class="hint">No results recorded yet</div></div>
+ <div class="stat"><div class="label">Exact-score hit rate</div><div class="value">—</div><div class="hint">No results recorded yet</div></div>
+</section>
+
+<div class="sectionhead" id="matches"><div><h2>Match centre</h2><div class="sub">Illustrative prediction cards — replace with verified pre-match analysis.</div></div>
+ <div class="controls"><select id="league"><option value="all">All competitions</option><option>Premier League</option><option>La Liga</option><option>Champions League</option></select></div>
+</div>
+<section class="matches" id="matchList"></section>
+
+<div class="sectionhead" id="performance"><div><h2>Prediction performance</h2><div class="sub">A transparent record matters more than advertised accuracy.</div></div></div>
+<section class="two">
+ <div class="card">
+  <h3>Results by market</h3><p class="sub">No verified sample yet. We will publish rates after enough matches have been tracked.</p>
+  <div class="bars">
+   <div class="barline"><span>1X2</span><div class="bar"><i style="width:0%"></i></div><b>—</b></div>
+   <div class="barline"><span>BTTS</span><div class="bar"><i style="width:0%"></i></div><b>—</b></div>
+   <div class="barline"><span>Over/Under</span><div class="bar"><i style="width:0%"></i></div><b>—</b></div>
+   <div class="barline"><span>Correct score</span><div class="bar"><i style="width:0%"></i></div><b>—</b></div>
+  </div>
+ </div>
+ <div class="card">
+  <h3>Our tracking rules</h3>
+  <div class="marketrow"><span>Predictions logged before kick-off</span><b class="good">Required</b></div>
+  <div class="marketrow"><span>Post-match edits</span><b class="good">Not allowed</b></div>
+  <div class="marketrow"><span>Sample size disclosed</span><b class="good">Required</b></div>
+  <div class="marketrow"><span>Guaranteed outcomes</span><b class="warning">Never</b></div>
+ </div>
+</section>
+
+<div class="sectionhead" id="method"><div><h2>How Cityguy analyses matches</h2><div class="sub">A hybrid statistical and contextual approach.</div></div></div>
+<section class="method">
+ <div class="card"><h3>01 · Team strength</h3><p>Recent form, home/away splits, goals for and against, squad availability and schedule congestion.</p></div>
+ <div class="card"><h3>02 · Goal probabilities</h3><p>xG, xGA and Poisson goal modelling to estimate scoreline and goals-market probabilities.</p></div>
+ <div class="card"><h3>03 · Match context</h3><p>Tactical matchup, injuries, suspensions and relevant situational factors, with uncertainty stated clearly.</p></div>
+</section>
+<section class="card" id="about" style="margin-top:14px">
+ <div class="eyebrow">About Cityguy</div><h2>Independent analysis. Accountable predictions.</h2>
+ <p class="sub">Cityguy Football Analytics aims to help supporters understand matches through data and clear reasoning. Probabilities are estimates, not guarantees. Football data and third-party sources will be credited where used.</p>
+</section>
+</main>
+<footer>© Cityguy Football Analytics · Built for football discussion and analysis · Not betting advice.</footer>
+<script>
+const demo = [
+ {league:"Premier League",date:"DEMO FIXTURE",home:"Example City",away:"Sample FC",score:"2–1",h:49,d:26,a:25,btts:57,o15:81,o25:55,o35:30,confidence:"Medium"},
+ {league:"La Liga",date:"DEMO FIXTURE",home:"Demo Madrid",away:"Test Barcelona",score:"1–1",h:34,d:30,a:36,btts:52,o15:76,o25:48,o35:22,confidence:"Low"},
+ {league:"Champions League",date:"DEMO FIXTURE",home:"Model United",away:"Analytics FC",score:"2–0",h:57,d:24,a:19,btts:43,o15:79,o25:51,o35:27,confidence:"Medium"}
+];
+const list=document.getElementById("matchList");
+function render(){
+ const filter=document.getElementById("league").value;
+ const rows=demo.filter(x=>filter==="all"||x.league===filter);
+ list.innerHTML=rows.map(m=>`<article class="card">
+  <div class="matchtop"><span class="tag">${m.league}</span><span class="pill">${m.date}</span></div>
+  <div class="teams"><div class="team">${m.home}</div><div class="score">${m.score}<div class="vs">MODEL SCORE · DEMO</div></div><div class="team">${m.away}</div></div>
+  <div class="probs"><div class="prob"><b>${m.h}%</b><span>HOME</span></div><div class="prob"><b>${m.d}%</b><span>DRAW</span></div><div class="prob"><b>${m.a}%</b><span>AWAY</span></div></div>
+  <div class="marketrow"><span>BTTS — Yes</span><b>${m.btts}%</b></div>
+  <div class="marketrow"><span>Over 1.5 goals</span><b>${m.o15}%</b></div>
+  <div class="marketrow"><span>Over 2.5 goals</span><b>${m.o25}%</b></div>
+  <div class="marketrow"><span>Over 3.5 goals</span><b>${m.o35}%</b></div>
+  <div class="cardfoot"><span>Confidence: <b class="conf">${m.confidence}</b></span><span>Illustrative data only</span></div>
+ </article>`).join("")||'<div class="card">No demo matches in this competition.</div>';
+}
+document.getElementById("league").addEventListener("change",render);render();
+</script>
+</body></html>
