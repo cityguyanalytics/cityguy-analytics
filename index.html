@@ -65,7 +65,112 @@ footer{border-top:1px solid var(--line);padding:25px 22px;color:var(--muted);tex
 @media(max-width:560px){.nav{align-items:flex-start}.navlinks{gap:10px;flex-wrap:wrap;justify-content:flex-end;font-size:11px}.hero{padding:25px 20px}.grid{grid-template-columns:repeat(2,1fr)}.stat{padding:13px}.stat .value{font-size:21px}.team{font-size:15px}}
 </style>
 </head>
-<body>
+<!-- CITYGUY MATCH SUBMISSION -->
+<section id="match-submission" style="background:#101f33;color:white;padding:25px;border-radius:15px;margin:30px auto;max-width:750px;">
+<h2 style="color:#e5b84b;">Request Match Analysis</h2>
+<p>Submit a football fixture for Cityguy analysis.</p>
+
+<form id="matchForm">
+<label>Competition</label>
+<input id="competition" required placeholder="Premier League">
+
+<label>Home Team</label>
+<input id="home" required placeholder="Manchester City">
+
+<label>Away Team</label>
+<input id="away" required placeholder="Arsenal">
+
+<label>Match Date</label>
+<input id="kickoff" type="date" required>
+
+<label>Prediction Markets</label>
+<select id="markets" multiple>
+<option>1X2</option>
+<option>Both Teams To Score</option>
+<option>Over/Under Goals</option>
+<option>Correct Score</option>
+<option>Half-time Result</option>
+<option>Double Chance</option>
+<option>Corners</option>
+</select>
+
+<label>Additional Information</label>
+<textarea id="notes" placeholder="Optional information"></textarea>
+
+<button type="submit" style="background:#e5b84b;padding:13px;border:0;border-radius:7px;margin-top:15px;font-weight:bold;">
+SUBMIT MATCH
+</button>
+</form>
+
+<p id="response" style="margin-top:15px;"></p>
+</section>
+
+<style>
+#matchForm label {
+display:block;
+margin-top:15px;
+font-weight:bold;
+}
+#matchForm input,
+#matchForm select,
+#matchForm textarea {
+width:100%;
+padding:12px;
+margin-top:6px;
+border-radius:6px;
+border:1px solid #52647a;
+box-sizing:border-box;
+}
+#matchForm button {
+cursor:pointer;
+}
+</style>
+
+<script>
+const SUPABASE_URL = "https://xrxjckrtkyfstszueyte.supabase.co/rest/v1/";
+const SUPABASE_KEY = "sb_publishable_WZnQT2Zf7QqQiV2S2k7TiA_uqVoJGWB";
+
+document.getElementById("matchForm").addEventListener("submit", async function(e) {
+e.preventDefault();
+
+const box = document.getElementById("response");
+box.textContent = "Submitting your match...";
+
+const selectedMarkets = [...document.getElementById("markets").selectedOptions].map(o => o.value || o.text);
+
+try {
+const result = await fetch(SUPABASE_URL + "/rest/v1/match_requests", {
+method: "POST",
+headers: {
+"apikey": SUPABASE_KEY,
+"Authorization": "Bearer " + SUPABASE_KEY,
+"Content-Type": "application/json",
+"Prefer": "return=minimal"
+},
+body: JSON.stringify({
+competition: document.getElementById("competition").value.trim(),
+home_team: document.getElementById("home").value.trim(),
+away_team: document.getElementById("away").value.trim(),
+kickoff: new Date(document.getElementById("kickoff").value + "T12:00:00+01:00").toISOString(),
+requested_markets: selectedMarkets,
+notes: document.getElementById("notes").value.trim(),
+status: "submitted"
+})
+});
+
+if (!result.ok) {
+throw new Error("Database submission failed: " + result.status);
+}
+
+box.textContent = "Success! Your match has been submitted to Cityguy Football Analytics.";
+this.reset();
+
+} catch(error) {
+console.error(error);
+box.textContent = "Submission failed. Please check your connection and try again.";
+}
+});
+</script><body>
 <div class="topbar"><nav class="nav">
  <a class="logo" href="#">CITYGUY<span> ⚽</span></a>
  <div class="navlinks"><a href="#matches">Predictions</a><a href="#performance">Performance</a><a href="#method">Methodology</a><a href="#about">About</a></div>
